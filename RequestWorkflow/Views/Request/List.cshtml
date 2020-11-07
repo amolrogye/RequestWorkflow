@@ -1,0 +1,216 @@
+﻿
+@{
+    ViewBag.Title = "List";
+}
+
+<script src="~/Scripts/Custom/main.js"></script>
+
+<style>
+
+    .vertical-align {
+        display: flex;
+        align-items: center;
+    }
+</style>
+
+<div class="page-header">
+    <div class="row vertical-align">
+        <div class="col-md-10"><h2>Request List</h2></div>
+        <div class="col-md-2">
+            <a href="@Url.Action("Index")" class="btn btn-success">Add Request</a>
+        </div>
+    </div>
+</div>
+<div>
+
+    <div id="divPendingList">
+
+    </div>
+
+    <hr />
+
+    <div id="divReqList">
+
+    </div>
+
+</div>
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            requestList.init();
+        });
+
+        var requestList = (function () {
+
+            var init = function () {
+                getList();
+                getPendingList();
+            };
+
+            var getList = function () {
+                $("#divReqList").empty();
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "@Url.Action("RequestList","Request")",
+                }).done(function (response) {
+                    if (response.isSuccess) {
+                        if (!!response.reqList && response.reqList.length > 0) {
+                            var tbl = document.createElement("table");
+                            var $head = $(
+                                `<thead>
+                                    <tr>
+                                        <th>Sr No</th>
+                                        <th>User Name</th>
+                                        <th>Module Name</th>
+                                        <th>RequestDate</th>
+                                        <th>Remark</th>
+                                        <th>Action</th>
+                                    </tr>
+                                 </thead>`
+                            );
+                            $("#divReqList").append(tbl);
+                            $("#divReqList table").append($head).addClass("table");
+
+                            $("#divReqList table").append(`<tbody id='reqBody'></tbody>`);
+
+                            $.each(response.reqList, function (i, v) {
+                                $("#reqBody").append(`
+                                    <tr>
+                                        <td>${i + 1}</td>
+                                        <td>${v.UserName}</td>
+                                        <td>${v.Name}</td>
+                                        <td>${mainManager.dateConverter(v.RequestDate)}</td>
+                                        <td>${v.Remark}</td>
+                                        <td>
+                                            <div>
+                                               <button type='button' class='btn-xs btn-primary' onclick='requestList.approveReq(${v.Id})'>Approve</button>
+                                               <button type='button' class='btn-xs btn-danger' onclick='requestList.rejectReq(${v.Id})'>Reject</button>
+                                            </div>
+                                       </td>
+                                    </tr>
+                                `);
+                            });
+
+                        } else {
+                            $("#divReqList").append(`<div class='alert alert-info'>
+                                No Pending request
+                            </div>`);
+                        }
+                    } else {
+                        alert("Something went wrong");
+                    }
+                }).fail(function (res) {
+                    console.log(res);
+                });
+            }
+
+            var getPendingList = function () {
+                $("#divPendingList").empty();
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    url: "@Url.Action("PendingReqList", "Request")",
+                }).done(function (response) {
+                    if (response.isSuccess) {
+                        if (!!response.pendingReqList && response.pendingReqList.length > 0) {
+
+                            var tbl = document.createElement("table");
+
+                            var $head =
+                                `<thead>
+                                    <tr>
+                                        <th>Sr No</th>
+                                        <th>ApproverName</th>
+                                        <th>ModuleName</th>
+                                        <th>RequestDate</th>
+                                        <th>Remark</th>
+                                    </tr>
+                                   </thead>`;
+
+                            var $body = document.createElement("tbody");
+
+                            $("#divPendingList").append(tbl);
+                            $("#divPendingList table").append($head).addClass("table");
+
+                            $("#divPendingList table").append("<tbody id='pendingBody'></tbody>");
+
+                            $.each(response.pendingReqList, function (i, v) {
+                                $("#pendingBody").append(`
+                                    <tr>
+                                        <td>${i + 1}</td>
+                                        <td>${v.ApproverName}</td>
+                                        <td>${v.ModuleName}</td>
+                                        <td>${mainManager.dateConverter(v.RequestDate)}</td>
+                                        <td>${v.Remark}</td>
+                                    </tr>
+                                `);
+                            });
+
+
+                        } else {
+                            $("#divPendingList").append(`<div class='alert alert-info'>
+                                No Pending request
+                            </div>`);
+                        }
+                    } else {
+                        alert("Something went wrong");
+                    }
+                }).fail(function (res) {
+                    alert("Something went wrong");
+                });
+            }
+
+            var approveReq = function (reqId) {
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    data: { reqId },
+                    url: "@Url.Action("ApproveRequest")"
+                }).done(function (response) {
+
+                    if (response.isSuccess) {
+                        alert("Request approved successfully");
+                        window.location.href = window.location.href;
+                    } else {
+                        alert(response.msg);
+                    }
+
+                }).fail(function () {
+                    alert("Something went wrong");
+                });
+            };
+
+            var rejectReq = function (reqId) {
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    data: { reqId },
+                    url: "@Url.Action("RejectRequest")"
+                }).done(function (response) {
+
+                    if (response.isSuccess) {
+                        alert("Request rejected successfully");
+                        window.location.href = window.location.href;
+                    } else {
+                        alert(response.msg);
+                    }
+
+                }).fail(function () {
+                    alert("Something went wrong");
+                });
+            }
+
+            return {
+                init: init,
+                approveReq: approveReq,
+                rejectReq: rejectReq
+            }
+
+        })();
+
+    </script>
+}
+

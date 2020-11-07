@@ -1,0 +1,96 @@
+﻿@model RequestWorkflow.Models.UserRequest
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+
+    .vertical-align {
+        display: flex;
+        align-items: center;
+    }
+</style>
+
+<div class="page-header">
+    <div class="row vertical-align">
+        <div class="col-md-10"><h2>Add Request</h2></div>
+        <div class="col-md-2">
+            <a href="@Url.Action("List")" class="btn btn-success">Back to List</a>
+        </div>
+    </div>
+</div>
+<div>
+
+    <div class="form-group">
+        <div class="row">
+            <label class="col-md-2" for="email">Select Module</label>
+            <div class="col-md-10">@Html.DropDownList("Modules", new SelectList(ViewBag.Modules, "Id", "Name"), new { @class = "form-control", @id = "moduleId" })</div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <label class="col-md-2" for="email">Remark</label>
+            <div class="col-md-10">
+                @Html.TextAreaFor(model => model.Remark, new { @rows = "5", @class = "form-control", id = "Remark" })
+            </div>
+        </div>
+    </div>
+
+    <input type="hidden" id="UserId" value="@Model.UserId" />
+    <input type="hidden" id="RequestDate" value="@Model.RequestDate" />
+    <input type="hidden" id="Id" value="@Model.Id" />
+
+    <hr />
+
+    <div class="form-group">
+        <button type="button" class="btn btn-primary" onclick="requestManager.saveRequest()">Submit</button>
+    </div>
+
+
+    @section scripts{
+
+        <script>
+
+        var requestManager = (function () {
+
+            var saveRequest = function () {
+
+                if ("@Session["UserId"]" == null || parseInt("@Session["UserId"]") <= 0) {
+                    alert("Please Login First");
+                    window.location.href = "@Url.Action("Login","User")"
+                    return false;
+                }
+
+                var req = {
+                    "UserId": $("#UserId").val(),
+                    "ModuleId": $("#moduleId").val(),
+                    "Remark": $("#Remark").val()
+                };
+
+                $.ajax({
+                    type: "post",
+                    dataType: "Json",
+                    url: "@Url.Action("SaveRequest")",
+                    data: req
+                }).done(function (response) {
+                    alert(response.msg);
+                    if (response.isSaved) {
+                        window.location.href = "@Url.Action("List")"
+                    }
+
+                }).fail(function () {
+
+                })
+
+            }
+
+            return {
+                saveRequest: saveRequest
+            }
+
+        })();
+
+        </script>
+
+    }
+

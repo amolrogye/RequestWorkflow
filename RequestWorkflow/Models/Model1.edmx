@@ -1,0 +1,534 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="RequestApprovalAutomationModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ApproverFlow">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" />
+          <Property Name="ApproverId" Type="int" />
+          <Property Name="ApprovalLevel" Type="int" />
+        </EntityType>
+        <EntityType Name="ModuleMaster">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="UserLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="LogDate" Type="datetime" />
+          <Property Name="LogMsg" Type="varchar(max)" />
+          <Property Name="ModuleId" Type="int" />
+          <Property Name="UserId" Type="int" />
+          <Property Name="IsSystemGenerated" Type="bit" />
+          <Property Name="IsViewed" Type="bit" />
+        </EntityType>
+        <EntityType Name="UserMaster">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserName" Type="varchar" MaxLength="50" />
+          <Property Name="Password" Type="varchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="UserRequest">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" />
+          <Property Name="ModuleId" Type="int" />
+          <Property Name="RequestDate" Type="datetime" />
+          <Property Name="Remark" Type="varchar" MaxLength="100" />
+          <Property Name="ApproverId" Type="int" />
+          <Property Name="Isapproved" Type="bit" />
+        </EntityType>
+        <Association Name="FK__ApproverF__Appro__07020F21">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="ApproverFlow" Type="Self.ApproverFlow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ApproverFlow">
+              <PropertyRef Name="ApproverId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ApproverF__UserI__060DEAE8">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="ApproverFlow" Type="Self.ApproverFlow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ApproverFlow">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserLog__ModuleI__182C9B23">
+          <End Role="ModuleMaster" Type="Self.ModuleMaster" Multiplicity="0..1" />
+          <End Role="UserLog" Type="Self.UserLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ModuleMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserLog">
+              <PropertyRef Name="ModuleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserLog__UserId__1920BF5C">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="UserLog" Type="Self.UserLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserLog">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserReque__Appro__21B6055D">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="UserRequest" Type="Self.UserRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRequest">
+              <PropertyRef Name="ApproverId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserReque__Modul__1FCDBCEB">
+          <End Role="ModuleMaster" Type="Self.ModuleMaster" Multiplicity="0..1" />
+          <End Role="UserRequest" Type="Self.UserRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ModuleMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRequest">
+              <PropertyRef Name="ModuleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserReque__UserI__1ED998B2">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="UserRequest" Type="Self.UserRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRequest">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="USP_APPROVE_USER_REQUEST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ReqId" Type="int" Mode="In" />
+          <Parameter Name="ApproverId" Type="int" Mode="In" />
+          <Parameter Name="IsSystemGenerated" Type="bit" Mode="In" />
+        </Function>
+        <Function Name="USP_FETCH_PENDING_REQ" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_FETCH_REQ_LIST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="Id" Type="int" Mode="In" />
+        </Function>
+        <Function Name="USP_REJECT_REQUEST" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="ReqId" Type="int" Mode="In" />
+          <Parameter Name="ApproverId" Type="int" Mode="In" />
+          <Parameter Name="IsSystemGenerated" Type="bit" Mode="In" />
+        </Function>
+        <EntityContainer Name="RequestApprovalAutomationModelStoreContainer">
+          <EntitySet Name="ApproverFlow" EntityType="Self.ApproverFlow" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ModuleMaster" EntityType="Self.ModuleMaster" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserLog" EntityType="Self.UserLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserMaster" EntityType="Self.UserMaster" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="UserRequest" EntityType="Self.UserRequest" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK__ApproverF__Appro__07020F21" Association="Self.FK__ApproverF__Appro__07020F21">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="ApproverFlow" EntitySet="ApproverFlow" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ApproverF__UserI__060DEAE8" Association="Self.FK__ApproverF__UserI__060DEAE8">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="ApproverFlow" EntitySet="ApproverFlow" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserLog__ModuleI__182C9B23" Association="Self.FK__UserLog__ModuleI__182C9B23">
+            <End Role="ModuleMaster" EntitySet="ModuleMaster" />
+            <End Role="UserLog" EntitySet="UserLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserLog__UserId__1920BF5C" Association="Self.FK__UserLog__UserId__1920BF5C">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="UserLog" EntitySet="UserLog" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserReque__Appro__21B6055D" Association="Self.FK__UserReque__Appro__21B6055D">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="UserRequest" EntitySet="UserRequest" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserReque__Modul__1FCDBCEB" Association="Self.FK__UserReque__Modul__1FCDBCEB">
+            <End Role="ModuleMaster" EntitySet="ModuleMaster" />
+            <End Role="UserRequest" EntitySet="UserRequest" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserReque__UserI__1ED998B2" Association="Self.FK__UserReque__UserI__1ED998B2">
+            <End Role="UserMaster" EntitySet="UserMaster" />
+            <End Role="UserRequest" EntitySet="UserRequest" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="RequestApprovalAutomationModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ApproverFlow">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" />
+          <Property Name="ApproverId" Type="Int32" />
+          <Property Name="ApprovalLevel" Type="Int32" />
+          <NavigationProperty Name="UserMaster" Relationship="Self.FK__ApproverF__Appro__07020F21" FromRole="ApproverFlow" ToRole="UserMaster" />
+          <NavigationProperty Name="UserMaster1" Relationship="Self.FK__ApproverF__UserI__060DEAE8" FromRole="ApproverFlow" ToRole="UserMaster" />
+        </EntityType>
+        <EntityType Name="ModuleMaster">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="UserLogs" Relationship="Self.FK__UserLog__ModuleI__182C9B23" FromRole="ModuleMaster" ToRole="UserLog" />
+          <NavigationProperty Name="UserRequests" Relationship="Self.FK__UserReque__Modul__1FCDBCEB" FromRole="ModuleMaster" ToRole="UserRequest" />
+        </EntityType>
+        <EntityType Name="UserLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="LogDate" Type="DateTime" Precision="3" />
+          <Property Name="LogMsg" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ModuleId" Type="Int32" />
+          <Property Name="UserId" Type="Int32" />
+          <Property Name="IsSystemGenerated" Type="Boolean" />
+          <NavigationProperty Name="ModuleMaster" Relationship="Self.FK__UserLog__ModuleI__182C9B23" FromRole="UserLog" ToRole="ModuleMaster" />
+          <NavigationProperty Name="UserMaster" Relationship="Self.FK__UserLog__UserId__1920BF5C" FromRole="UserLog" ToRole="UserMaster" />
+          <Property Name="IsViewed" Type="Boolean" />
+        </EntityType>
+        <EntityType Name="UserMaster">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserName" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="Password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="ApproverFlows" Relationship="Self.FK__ApproverF__Appro__07020F21" FromRole="UserMaster" ToRole="ApproverFlow" />
+          <NavigationProperty Name="ApproverFlows1" Relationship="Self.FK__ApproverF__UserI__060DEAE8" FromRole="UserMaster" ToRole="ApproverFlow" />
+          <NavigationProperty Name="UserLogs" Relationship="Self.FK__UserLog__UserId__1920BF5C" FromRole="UserMaster" ToRole="UserLog" />
+          <NavigationProperty Name="UserRequests" Relationship="Self.FK__UserReque__Appro__21B6055D" FromRole="UserMaster" ToRole="UserRequest" />
+          <NavigationProperty Name="UserRequests1" Relationship="Self.FK__UserReque__UserI__1ED998B2" FromRole="UserMaster" ToRole="UserRequest" />
+        </EntityType>
+        <EntityType Name="UserRequest">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" />
+          <Property Name="ModuleId" Type="Int32" />
+          <Property Name="RequestDate" Type="DateTime" Precision="3" />
+          <Property Name="Remark" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="ApproverId" Type="Int32" />
+          <Property Name="Isapproved" Type="Boolean" />
+          <NavigationProperty Name="ModuleMaster" Relationship="Self.FK__UserReque__Modul__1FCDBCEB" FromRole="UserRequest" ToRole="ModuleMaster" />
+          <NavigationProperty Name="UserMaster" Relationship="Self.FK__UserReque__Appro__21B6055D" FromRole="UserRequest" ToRole="UserMaster" />
+          <NavigationProperty Name="UserMaster1" Relationship="Self.FK__UserReque__UserI__1ED998B2" FromRole="UserRequest" ToRole="UserMaster" />
+        </EntityType>
+        <Association Name="FK__ApproverF__Appro__07020F21">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="ApproverFlow" Type="Self.ApproverFlow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ApproverFlow">
+              <PropertyRef Name="ApproverId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__ApproverF__UserI__060DEAE8">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="ApproverFlow" Type="Self.ApproverFlow" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ApproverFlow">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserLog__ModuleI__182C9B23">
+          <End Role="ModuleMaster" Type="Self.ModuleMaster" Multiplicity="0..1" />
+          <End Role="UserLog" Type="Self.UserLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ModuleMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserLog">
+              <PropertyRef Name="ModuleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserReque__Modul__1FCDBCEB">
+          <End Role="ModuleMaster" Type="Self.ModuleMaster" Multiplicity="0..1" />
+          <End Role="UserRequest" Type="Self.UserRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ModuleMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRequest">
+              <PropertyRef Name="ModuleId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserLog__UserId__1920BF5C">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="UserLog" Type="Self.UserLog" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserLog">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserReque__Appro__21B6055D">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="UserRequest" Type="Self.UserRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRequest">
+              <PropertyRef Name="ApproverId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__UserReque__UserI__1ED998B2">
+          <End Role="UserMaster" Type="Self.UserMaster" Multiplicity="0..1" />
+          <End Role="UserRequest" Type="Self.UserRequest" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="UserMaster">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="UserRequest">
+              <PropertyRef Name="UserId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="DBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ApproverFlows" EntityType="Self.ApproverFlow" />
+          <EntitySet Name="ModuleMasters" EntityType="Self.ModuleMaster" />
+          <EntitySet Name="UserLogs" EntityType="Self.UserLog" />
+          <EntitySet Name="UserMasters" EntityType="Self.UserMaster" />
+          <EntitySet Name="UserRequests" EntityType="Self.UserRequest" />
+          <AssociationSet Name="FK__ApproverF__Appro__07020F21" Association="Self.FK__ApproverF__Appro__07020F21">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="ApproverFlow" EntitySet="ApproverFlows" />
+          </AssociationSet>
+          <AssociationSet Name="FK__ApproverF__UserI__060DEAE8" Association="Self.FK__ApproverF__UserI__060DEAE8">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="ApproverFlow" EntitySet="ApproverFlows" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserLog__ModuleI__182C9B23" Association="Self.FK__UserLog__ModuleI__182C9B23">
+            <End Role="ModuleMaster" EntitySet="ModuleMasters" />
+            <End Role="UserLog" EntitySet="UserLogs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserReque__Modul__1FCDBCEB" Association="Self.FK__UserReque__Modul__1FCDBCEB">
+            <End Role="ModuleMaster" EntitySet="ModuleMasters" />
+            <End Role="UserRequest" EntitySet="UserRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserLog__UserId__1920BF5C" Association="Self.FK__UserLog__UserId__1920BF5C">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="UserLog" EntitySet="UserLogs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserReque__Appro__21B6055D" Association="Self.FK__UserReque__Appro__21B6055D">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="UserRequest" EntitySet="UserRequests" />
+          </AssociationSet>
+          <AssociationSet Name="FK__UserReque__UserI__1ED998B2" Association="Self.FK__UserReque__UserI__1ED998B2">
+            <End Role="UserMaster" EntitySet="UserMasters" />
+            <End Role="UserRequest" EntitySet="UserRequests" />
+          </AssociationSet>
+          <FunctionImport Name="USP_FETCH_REQ_LIST" ReturnType="Collection(RequestApprovalAutomationModel.USP_FETCH_REQ_LIST_Result)">
+          <Parameter Name="Id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_FETCH_PENDING_REQ" ReturnType="Collection(RequestApprovalAutomationModel.USP_FETCH_PENDING_REQ_Result)">
+          <Parameter Name="Id" Mode="In" Type="Int32" />
+          </FunctionImport>
+          <FunctionImport Name="USP_APPROVE_USER_REQUEST" ReturnType="Collection(RequestApprovalAutomationModel.USP_APPROVE_USER_REQUEST_Result)">
+            <Parameter Name="ReqId" Mode="In" Type="Int32" />
+            <Parameter Name="ApproverId" Mode="In" Type="Int32" />
+            <Parameter Name="IsSystemGenerated" Mode="In" Type="Boolean" />
+          </FunctionImport>
+          <FunctionImport Name="USP_REJECT_REQUEST" ReturnType="Collection(RequestApprovalAutomationModel.USP_REJECT_REQUEST_Result)">
+            <Parameter Name="ReqId" Mode="In" Type="Int32" />
+            <Parameter Name="ApproverId" Mode="In" Type="Int32" />
+            <Parameter Name="IsSystemGenerated" Mode="In" Type="Boolean" />
+          </FunctionImport>
+        </EntityContainer>
+        <ComplexType Name="USP_FETCH_REQ_LIST_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="UserName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="Name" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="RequestDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Remark" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="USP_FETCH_PENDING_REQ_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="ApproverName" Nullable="true" MaxLength="50" />
+          <Property Type="String" Name="ModuleName" Nullable="true" MaxLength="50" />
+          <Property Type="DateTime" Name="RequestDate" Nullable="true" Precision="23" />
+          <Property Type="String" Name="Remark" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="USP_APPROVE_USER_REQUEST_Result">
+          <Property Type="Boolean" Name="isSuccess" Nullable="true" />
+          <Property Type="String" Name="msg" Nullable="true" MaxLength="100" />
+        </ComplexType>
+        <ComplexType Name="USP_REJECT_REQUEST_Result">
+          <Property Type="Boolean" Name="IsDeleted" Nullable="true" />
+          <Property Type="String" Name="msg" Nullable="true" />
+        </ComplexType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="RequestApprovalAutomationModelStoreContainer" CdmEntityContainer="DBEntities">
+          <EntitySetMapping Name="ApproverFlows">
+            <EntityTypeMapping TypeName="RequestApprovalAutomationModel.ApproverFlow">
+              <MappingFragment StoreEntitySet="ApproverFlow">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ApproverId" ColumnName="ApproverId" />
+                <ScalarProperty Name="ApprovalLevel" ColumnName="ApprovalLevel" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ModuleMasters">
+            <EntityTypeMapping TypeName="RequestApprovalAutomationModel.ModuleMaster">
+              <MappingFragment StoreEntitySet="ModuleMaster">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserLogs">
+            <EntityTypeMapping TypeName="RequestApprovalAutomationModel.UserLog">
+              <MappingFragment StoreEntitySet="UserLog">
+                <ScalarProperty Name="IsViewed" ColumnName="IsViewed" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="LogDate" ColumnName="LogDate" />
+                <ScalarProperty Name="LogMsg" ColumnName="LogMsg" />
+                <ScalarProperty Name="ModuleId" ColumnName="ModuleId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="IsSystemGenerated" ColumnName="IsSystemGenerated" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserMasters">
+            <EntityTypeMapping TypeName="RequestApprovalAutomationModel.UserMaster">
+              <MappingFragment StoreEntitySet="UserMaster">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="UserRequests">
+            <EntityTypeMapping TypeName="RequestApprovalAutomationModel.UserRequest">
+              <MappingFragment StoreEntitySet="UserRequest">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="ModuleId" ColumnName="ModuleId" />
+                <ScalarProperty Name="RequestDate" ColumnName="RequestDate" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+                <ScalarProperty Name="ApproverId" ColumnName="ApproverId" />
+                <ScalarProperty Name="Isapproved" ColumnName="Isapproved" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="USP_FETCH_REQ_LIST" FunctionName="RequestApprovalAutomationModel.Store.USP_FETCH_REQ_LIST">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RequestApprovalAutomationModel.USP_FETCH_REQ_LIST_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="UserName" ColumnName="UserName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="RequestDate" ColumnName="RequestDate" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_FETCH_PENDING_REQ" FunctionName="RequestApprovalAutomationModel.Store.USP_FETCH_PENDING_REQ">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RequestApprovalAutomationModel.USP_FETCH_PENDING_REQ_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="ApproverName" ColumnName="ApproverName" />
+                <ScalarProperty Name="ModuleName" ColumnName="ModuleName" />
+                <ScalarProperty Name="RequestDate" ColumnName="RequestDate" />
+                <ScalarProperty Name="Remark" ColumnName="Remark" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_APPROVE_USER_REQUEST" FunctionName="RequestApprovalAutomationModel.Store.USP_APPROVE_USER_REQUEST">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RequestApprovalAutomationModel.USP_APPROVE_USER_REQUEST_Result">
+                <ScalarProperty Name="isSuccess" ColumnName="isSuccess" />
+                <ScalarProperty Name="msg" ColumnName="msg" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+          <FunctionImportMapping FunctionImportName="USP_REJECT_REQUEST" FunctionName="RequestApprovalAutomationModel.Store.USP_REJECT_REQUEST">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="RequestApprovalAutomationModel.USP_REJECT_REQUEST_Result">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="msg" ColumnName="msg" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

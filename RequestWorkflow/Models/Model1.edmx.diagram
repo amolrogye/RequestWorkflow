@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="99348cb5e1d447e6a6fd51f8197dc824" Name="Diagram1">
+        <EntityTypeShape EntityType="RequestApprovalAutomationModel.ApproverFlow" Width="1.5" PointX="3" PointY="5.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="RequestApprovalAutomationModel.ModuleMaster" Width="1.5" PointX="0.75" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="RequestApprovalAutomationModel.UserLog" Width="1.5" PointX="6" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RequestApprovalAutomationModel.UserMaster" Width="1.5" PointX="0.75" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="RequestApprovalAutomationModel.UserRequest" Width="1.5" PointX="3" PointY="0.75" IsExpanded="true" />
+        <AssociationConnector Association="RequestApprovalAutomationModel.FK__ApproverF__Appro__07020F21" ManuallyRouted="false" />
+        <AssociationConnector Association="RequestApprovalAutomationModel.FK__ApproverF__UserI__060DEAE8" ManuallyRouted="false" />
+        <AssociationConnector Association="RequestApprovalAutomationModel.FK__UserLog__ModuleI__182C9B23" ManuallyRouted="false" />
+        <AssociationConnector Association="RequestApprovalAutomationModel.FK__UserReque__Modul__1FCDBCEB" ManuallyRouted="false" />
+        <AssociationConnector Association="RequestApprovalAutomationModel.FK__UserLog__UserId__1920BF5C" ManuallyRouted="false" />
+        <AssociationConnector Association="RequestApprovalAutomationModel.FK__UserReque__Appro__21B6055D" ManuallyRouted="false" />
+        <AssociationConnector Association="RequestApprovalAutomationModel.FK__UserReque__UserI__1ED998B2" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
