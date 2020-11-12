@@ -1,0 +1,514 @@
+﻿
+@{
+    ViewBag.Title = "UpdateSchedule";
+}
+
+<style>
+
+    .vertical-align {
+        display: flex;
+        align-items: center;
+    }
+
+    .padding-left-0 {
+        padding-left: 0 !important;
+    }
+
+    .border-danger {
+        border-color: red !important;
+    }
+</style>
+
+<div class="page-header">
+    <div class="row vertical-align">
+        <div class="col-md-10"><h2>Update Schedule Time</h2></div>
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-md-2 control-label">Select Schedular</label>
+            <div class="col-md-10">
+                @Html.DropDownList("SchedularList", ViewBag.SchedularList as List<SelectListItem>, "SELECT", new { @class = "form-control", @onchange = "schedularManager.getSchedularInfo();" })
+            </div>
+        </div>
+    </div>
+    <br /><br />
+</div>
+
+<div class="row schType hide">
+
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-md-2 control-label">Schedule Type:</label>
+            <div class="col-md-4">
+                @Html.DropDownList("ScheduleType", ViewBag.ScheduleType as List<SelectListItem>, "SELECT", new { @class = "form-control", @onchange = "schedularManager.hideShowOptions();" })
+            </div>
+
+            <div class="col-md-6">
+                <div class="checkbox">
+                    <label><input type="checkbox" id="enabled">Enabled</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row Once hide">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-md-12 control-label">One-time occurrence</label>
+        </div>
+
+        <div class="form-group">
+            <label class="col-md-2 control-label">Date</label>
+            <div class="col-md-4">
+                @Html.TextBox("OnceDate", "", new { @type = "date", @class = "form-control" })
+            </div>
+            <label class="col-md-2 control-label">Time</label>
+            <div class="col-md-4">
+                @Html.TextBox("OnceTime", "", new { @type = "time", @class = "form-control" })
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row Daily hide">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-md-2 control-label">Recurs every days</label>
+            <div class="col-md-4">
+                @Html.TextBox("DailyRecurs", "", new { @type = "number", @min = "1", @max = "9999", @class = "form-control" })
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row Weekly hide">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-md-2 control-label">Recurs every week(s) on</label>
+            <div class="col-md-4">
+                @Html.TextBox("WeeklyRecurs", "", new { @type = "number", @min = "1", @max = "100", @class = "form-control" })
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <div class="checkbox">
+                    <label><input type="checkbox" class="chkWeek" data-weekval="1" id="WeekSunday">Sunday</label>
+                    <label><input type="checkbox" class="chkWeek" data-weekval="2" id="WeekMonday">Monday</label>
+                    <label><input type="checkbox" class="chkWeek" data-weekval="4" id="WeekTuesday">Tuesday</label>
+                    <label><input type="checkbox" class="chkWeek" data-weekval="8" id="WeekWednesday">Wednesday</label>
+                    <label><input type="checkbox" class="chkWeek" data-weekval="16" id="WeekThursday">Thursday</label>
+                    <label><input type="checkbox" class="chkWeek" data-weekval="32" id="WeekFriday">Friday</label>
+                    <label><input type="checkbox" class="chkWeek" data-weekval="64" id="WeekSaturday">Saturday</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row common hide">
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="col-md-2">
+                <div class="radio">
+                    <label><input type="radio" id="DailyOccursOnce" name="DailyFrequency" value="O" onclick="schedularManager.hideShowDailyFrequency();" checked>Occurce Once at</label>
+                    <label><input type="radio" id="DailyOccursEvery" name="DailyFrequency" value="E" onclick="schedularManager.hideShowDailyFrequency();">Occurce Every</label>
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="DailyFrequencyOnce">
+                    <div class="form-group">
+                        <div class="col-md-4 padding-left-0">
+                            @Html.TextBox("DailyFrequencyOnce", "", new { @class = "form-control", @type = "time" })
+                        </div>
+                    </div>
+                </div>
+                <div class="DailyFrequencyEvery hide">
+                    <div class="form-group">
+                        <div class="col-md-2 padding-left-0">
+                            <input type="number" min="1" max="999999" step="1" class="form-control" id="DailyFrequencyEvery" />
+                        </div>
+                        <div class="col-md-2">
+                            @Html.DropDownList("DailyFrequencyInterval", ViewBag.DailyFrequencyInterval as List<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Starting at</label>
+                        <div class="col-md-2">
+                            <input type="time" class="form-control" id="DailyFrequencyStartTime" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-2 control-label">Ending at</label>
+                        <div class="col-md-2">
+                            <input type="time" class="form-control" id="DailyFrequencyEndTime" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-md-2 control-label">Start Date</label>
+            <div class="col-md-4">
+                <input type="date" class="form-control" id="DailyStartDate" />
+            </div>
+            <div class="col-md-3">
+                <div class="radio">
+                    <label><input type="radio" id="DailyEndDate" name="DailyEndDate" value="Y" onclick="schedularManager.hideShowDailyEndDate();" checked>End Date</label>
+                    <label><input type="radio" id="DailyNoEndDate" name="DailyEndDate" value="N" onclick="schedularManager.hideShowDailyEndDate();">No End Date</label>
+                </div>
+            </div>
+            <div class="col-md-3" id="DailyEndDateDiv">
+                <div class="form-group">
+                    <input type="date" class="form-control" id="DailyEndDatePicker" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="row">
+    <input type="button" class="btn btn-primary" value="Save" onclick="schedularManager.save();" />
+</div>
+
+
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            schedularManager.hideShowOptions();
+        });
+
+        var schedularManager = (function () {
+
+            var hideShowOptions = function () {
+
+                $(".Once").addClass("hide");
+                $(".Daily").addClass("hide");
+                $(".common").addClass("hide");
+                $(".Weekly").addClass("hide");
+
+                if ($("#ScheduleType").val() == "1") {
+                    $(".Once").removeClass("hide");
+                } else if ($("#ScheduleType").val() == "4") {
+                    $(".Daily").removeClass("hide");
+                    $(".common").removeClass("hide");
+                } else if ($("#ScheduleType").val() == "8") {
+                    $(".Weekly").removeClass("hide");
+                    $(".common").removeClass("hide");
+                }
+            };
+
+            var hideShowDailyFrequency = function () {
+                if ($("input[name='DailyFrequency']:checked").val() == "O") {
+                    $(".DailyFrequencyOnce").removeClass('hide');
+                    $(".DailyFrequencyEvery").addClass('hide');
+                } else {
+                    $(".DailyFrequencyEvery").removeClass('hide');
+                    $(".DailyFrequencyOnce").addClass('hide');
+                }
+            }
+
+            var hideShowDailyEndDate = function () {
+                if ($("input[name='DailyEndDate']:checked").val() == "Y") {
+                    $("#DailyEndDateDiv").removeClass('hide');
+                } else {
+                    $("#DailyEndDateDiv").addClass('hide');
+                }
+            };
+
+            var save = function () {
+
+                if (validate()) {
+                    var schdularInfo = {};
+
+                    schdularInfo.enabled = $("#enabled").prop("checked") ? "1" : "0";
+                    schdularInfo.freq_type = $("#ScheduleType").val();
+
+                    schdularInfo.freq_interval = "0";
+                    schdularInfo.freq_subday_type = "0";
+                    schdularInfo.freq_subday_interval = "0";
+                    schdularInfo.freq_relative_interval = "0";
+                    schdularInfo.freq_recurrence_factor = "0";
+                    schdularInfo.active_start_date = "20200101";
+                    schdularInfo.active_end_date = "99991231";
+                    schdularInfo.active_start_time = "000000";
+                    schdularInfo.active_end_time = "235959";
+
+
+                    //Once then
+                    if ($("#ScheduleType").val() == "1") {
+                        schdularInfo.active_start_date = getDateFormat($("#OnceDate").val());
+                        schdularInfo.active_start_time = getTimeFormat($("#OnceTime").val());
+                    }
+
+                    //Daily
+                    if ($("#ScheduleType").val() == "4") {
+                        schdularInfo.freq_interval = $("#DailyRecurs").val();
+                        schdularInfo.freq_subday_type = "1";
+                    }
+
+                    if ($("#ScheduleType").val() == "8") {
+                        schdularInfo.freq_recurrence_factor = $("#WeeklyRecurs").val();
+                        schdularInfo.freq_interval = GetWeeklyFreInterval();
+                    }
+
+                    //Common
+                    if ($("#ScheduleType").val() != "1") {
+
+                       if ($("input[name='DailyFrequency']:checked").val() == "O") {
+                            schdularInfo.active_start_time = getTimeFormat($("#DailyFrequencyOnce").val());
+                        } else {
+                            schdularInfo.freq_subday_type = $("#DailyFrequencyInterval").val();
+                            schdularInfo.freq_subday_interval = $("#DailyFrequencyEvery").val();
+                            schdularInfo.active_start_time = getTimeFormat($("#DailyFrequencyStartTime").val());
+                            schdularInfo.active_end_time = getTimeFormat($("#DailyFrequencyEndTime").val());
+                        }
+
+                        schdularInfo.active_start_date = getDateFormat($("#DailyStartDate").val());
+                        if ($("input[name='DailyEndDate']:checked").val() == "Y") {
+                            schdularInfo.active_end_date = getDateFormat($("#DailyEndDatePicker").val());
+                        }
+                    }
+
+                    $.ajax({
+                        type: "post",
+                        dataType: "json",
+                        data: schdularInfo,
+                        url: "@Url.Action("UpdateSchedular")"
+                    }).done(function (response) {
+                        if (response) {
+                            alert("Schedular updated successfully");
+                        } else {
+                            alert("Something went wrong");
+                        }
+                    }).fail(function () {
+                        alert("Something went wrong");
+                    });
+
+                }
+
+            };
+
+            var validate = function () {
+                var isValid = true;
+                var msg = ""
+
+                if ($("#ScheduleType").val() == "") {
+                    alert("Please select Schedule Type");
+                    return false;
+                }
+
+                //Once
+                if ($("#ScheduleType").val() == "1") {
+                    if ($("#OnceDate").val() == "") {
+                        msg += "Please select Date\n";
+                        isValid = false;
+                    };
+
+                    if ($("#OnceTime").val() == "") {
+                        msg += "Please select Time\n";
+                        isValid = false;
+                    };
+                }
+
+                //Daily
+                else if ($("#ScheduleType").val() == "4") {
+                    if ($("#DailyRecurs").val() == "" || $("#DailyRecurs").val() <= 0) {
+                        msg += "Please select recurs day(s)\n";
+                        isValid = false;
+                    };
+                }
+
+                //Weekly
+                else if ($("#ScheduleType").val() == "8") {
+                    if ($("#WeeklyRecurs").val() == "" || $("#WeeklyRecurs").val() <= 0) {
+                        msg += "Please select recurs week(s)\n";
+                        isValid = false;
+                    }
+
+                    if ($(".chkWeek:checked").length <= 0) {
+                        msg += "Please select week day(s)\n";
+                        isValid = false;
+                    }
+                }
+
+                //Common
+                if ($("#ScheduleType").val() != "" && $("#ScheduleType").val() != "1") {
+                    if ($("input[name='DailyFrequency']:checked").val() == "O") {
+                        if ($("#DailyFrequencyOnce").val() == "") {
+                            msg += "Please select Occurence time\n";
+                            isValid = false;
+                        }
+                    } else {
+                        if ($("#DailyFrequencyEvery").val() == "" || $("#DailyFrequencyEvery").val() <= 0) {
+                            msg += "Please select Occurence interval\n";
+                            isValid = false;
+                        }
+
+                        if ($("#DailyFrequencyStartTime").val() == "") {
+                            msg += "Please select starting time\n";
+                            isValid = false;
+                        }
+
+                        if ($("#DailyFrequencyEndTime").val() == "") {
+                            msg += "Please select ending time\n";
+                            isValid = false;
+                        }
+                    }
+
+                    if ($("#DailyStartDate").val() == "") {
+                        msg += "Please select start date\n";
+                        isValid = false;
+                    }
+
+                    if ($("input[name='DailyEndDate']:checked").val() == "Y" && $("#DailyEndDatePicker").val() == "") {
+                        msg += "Please select End date\n";
+                        isValid = false;
+                    }
+                }
+
+                
+
+                if (!!msg) {
+                    alert(msg);
+                }
+
+                return isValid;
+            }
+
+            var getDateFormat = function (val) {
+                return val.replace(/-/g, "");
+            }
+
+            var getTimeFormat = function (val) {
+                return val.replace(":", "") + "00";
+            }
+
+            var setDateFormat = function (val) {
+                val = val.toString();
+                return val.substring(0, 4) + "-" + val.substring(5, 7) + "-" + val.substring(6);
+            };
+
+            var setTimeFormat = function (val) {
+                val = val.toString();
+                return val.substring(0, 2) + ":" + val.substring(2, 4);
+            }
+
+            var getSchedularInfo = function () {
+
+                $(".Once").addClass("hide");
+                $(".Daily").addClass("hide");
+                $(".common").addClass("hide");
+
+                if ($("#SchedularList").val() == "") {
+                    $(".schType").addClass("hide");
+                    $("#ScheduleType").val("");
+                    return false;
+                }
+
+                $.ajax({
+                    type: "post",
+                    dataType: "json",
+                    data: { "id": $("#SchedularList").val() },
+                    url: "@Url.Action("GetSchedularInfo")"
+                }).done(function (response) {
+
+                    console.log(response);
+                    $(".schType").removeClass("hide");
+
+                    response.info.enabled == "1" ? $("#enabled").prop("checked", true) : $("#enabled").prop("checked", false);
+                    $("#ScheduleType").val(response.info.freq_type);
+
+                    //Once
+                    if (response.info.freq_type == "1") {
+                        $("#OnceDate").val(setDateFormat(response.info.active_start_date));
+                        $("#OnceTime").val(setTimeFormat(response.info.active_start_time));
+                    }
+                    //Daily
+                    else if (response.info.freq_type == "4") {
+                        $("#DailyRecurs").val(response.info.freq_interval);
+                    }
+
+                    //Weekly
+                    else if (response.info.freq_type == "8") {
+                        $("#WeeklyRecurs").val(response.info.freq_recurrence_factor);
+                        setWeekDaysSelection(response.info.freq_interval);
+                    }
+
+                    //Common
+                    if (response.info.freq_type != "1") {
+                        if (response.info.freq_subday_type == "1") {
+                            $("#DailyFrequencyOnce").val(setTimeFormat(response.info.active_start_time));
+                            $("#DailyOccursOnce").prop("checked", true);
+                        } else {
+                            $("#DailyFrequencyEvery").val(response.info.freq_subday_interval);
+                            $("#DailyFrequencyInterval").val(response.info.freq_subday_type);
+                            $("#DailyFrequencyStartTime").val(setTimeFormat(response.info.active_start_time));
+                            $("#DailyFrequencyEndTime").val(setTimeFormat(response.info.active_end_time));
+                            $("#DailyOccursEvery").prop("checked", true);
+                        }
+
+                        $("#DailyStartDate").val(setDateFormat(response.info.active_start_date));
+                        if (response.info.active_end_date != "99991231") {
+                            $("#DailyEndDatePicker").val(setDateFormat(response.info.active_end_date));
+                            $("#DailyEndDate").prop("checked", true);
+                        } else {
+                            $("#DailyNoEndDate").prop("checked", true);
+                        }
+                    }
+
+                    hideShowOptions();
+                    hideShowDailyFrequency();
+                    hideShowDailyEndDate();
+
+                }).fail(function () {
+
+                });
+
+            };
+
+            var setWeekDaysSelection = function (val) {
+                for (var i = $(".chkWeek").length - 1; i >= 0; i--) {
+                    if ($($(".chkWeek")[i]).data("weekval") <= val) {
+                        $($(".chkWeek")[i]).prop("checked", true);
+                        val -= $($(".chkWeek")[i]).data("weekval");
+                    };
+                }
+            }
+
+            var GetWeeklyFreInterval = function () {
+                var val = 0;
+                $.each($(".chkWeek:checked"), function (i, v) {
+                    val += $(v).data("weekval");
+                });
+
+                return val;
+            }
+
+            return {
+                hideShowOptions: hideShowOptions,
+                hideShowDailyFrequency: hideShowDailyFrequency,
+                hideShowDailyEndDate: hideShowDailyEndDate,
+                save: save,
+                getSchedularInfo: getSchedularInfo
+            }
+
+        })();
+
+    </script>
+}
+

@@ -19,37 +19,36 @@
         </div>
     </div>
 </div>
-<div>
 
-    <div class="form-group">
-        <div class="row">
-            <label class="col-md-2" for="email">Select Module</label>
-            <div class="col-md-10">@Html.DropDownList("Modules", new SelectList(ViewBag.Modules, "Id", "Name"), new { @class = "form-control", @id = "moduleId" })</div>
+<div class="form-group">
+    <div class="row">
+        <label class="col-md-2" for="email">Select Module</label>
+        <div class="col-md-10">@Html.DropDownList("Modules", new SelectList(ViewBag.Modules, "Id", "Name"), new { @class = "form-control", @id = "moduleId" })</div>
+    </div>
+</div>
+<div class="form-group">
+    <div class="row">
+        <label class="col-md-2" for="email">Remark</label>
+        <div class="col-md-10">
+            @Html.TextAreaFor(model => model.Remark, new { @rows = "5", @class = "form-control", id = "Remark" })
         </div>
     </div>
-    <div class="form-group">
-        <div class="row">
-            <label class="col-md-2" for="email">Remark</label>
-            <div class="col-md-10">
-                @Html.TextAreaFor(model => model.Remark, new { @rows = "5", @class = "form-control", id = "Remark" })
-            </div>
-        </div>
-    </div>
+</div>
 
-    <input type="hidden" id="UserId" value="@Model.UserId" />
-    <input type="hidden" id="RequestDate" value="@Model.RequestDate" />
-    <input type="hidden" id="Id" value="@Model.Id" />
+<input type="hidden" id="UserId" value="@Model.UserId" />
+<input type="hidden" id="RequestDate" value="@Model.RequestDate" />
+<input type="hidden" id="Id" value="@Model.Id" />
 
-    <hr />
+<hr />
 
-    <div class="form-group">
-        <button type="button" class="btn btn-primary" onclick="requestManager.saveRequest()">Submit</button>
-    </div>
+<div class="form-group">
+    <button type="button" class="btn btn-primary" onclick="requestManager.saveRequest()">Submit</button>
+</div>
 
 
-    @section scripts{
+@section scripts{
 
-        <script>
+    <script>
 
         var requestManager = (function () {
 
@@ -90,7 +89,7 @@
 
         })();
 
-        </script>
+    </script>
 
-    }
+}
 
